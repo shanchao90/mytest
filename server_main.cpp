@@ -9,6 +9,8 @@ class person
 public:
 
 private:
+int id_sys;
+int id_per;
 
 };
 
