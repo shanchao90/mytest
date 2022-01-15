@@ -1,3 +1,159 @@
-1
-2
-3
+https://ipaddress.com
+222.92.67.206
+github.com
+140.82.113.4
+
+assets-cdn.github.com
+185.199.108.153
+185.199.109.153
+185.199.110.153
+185.199.111.153
+
+global.ssl.fastly.net
+199.232.68.249
+
+codeload.github.com
+140.82.113.10
+
+https://github.com/shanchao90/mytest.git
+
+https://hub.fastgit.org
+
+////wsl安装
+Add-AppxPackage .\Ubuntu_2004.2020.424.0_x64.appx
+Get-AppXPackage *WindowsStore* -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}<img src="https://pica.zhimg.com/50/v2-8ec8ae31c1c53079e2e9def3ce6b532b_720w.jpg?source=1940ef5c" data-rawwidth="1280" data-rawheight="537" data-size="normal" data-default-watermark-src="https://pic3.zhimg.com/50/v2-c6b4f2041af9cf9158654b284b7e4983_720w.jpg?source=1940ef5c" class="origin_image zh-lightbox-thumb" width="1280" data-original="https://pic3.zhimg.com/v2-8ec8ae31c1c53079e2e9def3ce6b532b_r.jpg?source=1940ef5c"/>
+
+////linux配置
+cd
+sudo apt-get update 
+mkdir wsl-code
+pwd
+history
+code .  
+
+su root #切换root
+sudo passwd root #设置root密码
+
+
+////git-win配置
+git config -l
+git config --global user.name "shanchao90"
+git config --global user.email shanchao90@163.com
+mkdir .ssh
+cd .ssh
+ssh-keygen -t rsa
+git clone git@github.com:shanchao90/mytest.git
+
+////git-linux配置
+git config --list
+git config --global user.name "shanchao90"
+git config --global user.email shanchao90@163.com
+ssh-keygen -t rsa
+//测试连通，修改DNS
+ping: github.com
+ping: baidu.com
+sudo vi /etc/resolv.conf
+nameserver 8.8.8.8
+//clone
+git clone git@github.com:shanchao90/mytest.git
+
+////mysql-linux配置
+sudo apt install mysql-server
+service mysql status
+service mysql stop
+service mysql restart
+sudo service mysql start
+
+#删除1
+sudo rm /var/lib/mysql/ -R
+sudo rm /etc/mysql/ -R
+sudo apt-get autoremove mysql* --purge
+#删除2
+sudo apt-get remove --purge *mysql*
+sudo rm -rf /etc/mysql /var/lib/mysql
+sudo apt-get remove --purge *mariadb*
+#解决安装不完全
+sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/
+sudo mkdir /var/lib/dpkg/info/
+sudo apt-get update
+
+sudo apt update
+sudo apt upgrade
+
+#免密
+#https://www.tqwba.com/x_d/jishu/244063.html
+sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf # 添加skip-grant-tables
+
+#解决 su: Authentication failure
+su root #切换root
+sudo passwd root #设置root密码
+
+mysql -u root -p
+
+update user set authentication_string='' where user='root'; #不设密码
+update user set plugin='mysql_native_password' where user='root'; #更改加密方式
+ALTER USER 'root'@'localhost' IDENTIFIED BY '870819'; #设密码
+flush privileges; #刷新
+
+create user 'shanchao'@'localhost' identified by '870819';
+
+//基本格式如下
+grant all privileges on 数据库名.表名 to '新用户名'@'指定ip' identified by '新用户密码' ;
+//示例
+//允许访问所有数据库下的所有表
+grant all privileges on *.* to '新用户名'@'指定ip' identified by '新用户密码' ;
+//指定数据库下的指定表
+grant all privileges on test.test to '新用户名'@'指定ip' identified by '新用户密码' ;
+
+grant all privileges on *.* to 'shanchao'@'localhost';
+
+//设置用户拥有所有权限也就是管理员
+grant all privileges on *.* to '新用户名'@'指定ip' identified by '新用户密码' WITH GRANT OPTION;
+//拥有查询权限
+grant select on *.* to '新用户名'@'指定ip' identified by '新用户密码' WITH GRANT OPTION;
+//其它操作权限说明,select查询 insert插入 delete删除 update修改
+//设置用户拥有查询插入的权限
+grant select,insert on *.* to '新用户名'@'指定ip' identified by '新用户密码' WITH GRANT OPTION;
+//取消用户查询的查询权限
+REVOKE select ON what FROM '新用户名';
+
+DROP USER username@localhost;
+
+#su: warning: cannot change directory to /nonexistent: No such file or direct
+#这种错误一般是 mysql 服务器异常关机导致的
+sudo service mysql stop
+sudo usermod -d /var/lib/mysql/ mysql
+sudo service mysql start
+
+# Client does not support authentication protocol requested by server 解决方案
+alter user 'root'@'localhost' identified with mysql_native_password by '870819';
+flush privileges;
+alter user 'shanchao'@'%' identified with mysql_native_password by '870819';
+
+UPDATE user set Host='%' where user="shanchao";
+SELECT User,Host FROM user where user="shanchao";
+
+////git使用
+git init //本地搭建初始化
+git clone ...
+git status//状态
+
+git add 
+git commit -m "备注"
+git push
+
+git pull
+git reset
+git checkout
+
+git branch //列出所有分支
+git branch -r //列出所有远程分支
+git branch [名称] //新建分支，但依旧留在当前分支
+git checkout -b [名称] //新建并切换分支
+git merge [名称] //合并指定分支到当前分支
+git branch -d [名称] //删除分支
+git push origin --delete [名称] //删除远程分支
+git branch -dr [名称] //删除远程分支
+////vim
+
+
