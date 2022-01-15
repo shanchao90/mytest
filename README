@@ -156,4 +156,7 @@ git push origin --delete [名称] //删除远程分支
 git branch -dr [名称] //删除远程分支
 ////vim
 
-
+//更新问题
+sudo vim /etc/resolv.conf 
+nameserver 202.96.134.133
+nameserver 202.96.128.68
