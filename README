@@ -160,3 +160,5 @@ git branch -dr [名称] //删除远程分支
 sudo vim /etc/resolv.conf 
 nameserver 202.96.134.133
 nameserver 202.96.128.68
+
+sudo apt-get install mysql-client mysql-server libmysqlclient-dev #libmysqlclient-dev是安装mysql的C/C++库
