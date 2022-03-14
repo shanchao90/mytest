@@ -202,6 +202,7 @@ int main(){
             case 'l':shotea(p_min);break;
             case 'z':
             close(sock);//关闭套接字
+            delete(p_min);
             cout<<"Bye!"<<endl;
             return 0;
             break;
