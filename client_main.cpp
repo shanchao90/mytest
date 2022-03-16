@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 using namespace std;
 
-typedef struct message
+struct message
 {
     int func=0;//操作数
     string PerNam;//姓名

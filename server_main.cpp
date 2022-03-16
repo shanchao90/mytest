@@ -10,7 +10,7 @@
 #include <mysql/mysql.h>
 
 using namespace std;
-typedef struct message
+struct message
 {
     int func=0;//操作数
     string PerNam;//姓名
@@ -185,6 +185,9 @@ int main(int argc,char *argv[])
     bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
     //进入监听状态，等待用户发起请求
     listen(serv_sock, 20);
+
+
+
     //接收客户端请求
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
