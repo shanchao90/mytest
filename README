@@ -162,4 +162,4 @@ nameserver 202.96.134.133
 nameserver 202.96.128.68
 
 sudo apt-get install mysql-client mysql-server libmysqlclient-dev #libmysqlclient-dev是安装mysql的C/C++库
-g++ -o main123 main.cpp//main123 目标文件 main.cpp 源文件
+g++ -o main123 main.cpp//main123 目标文件 main.cpp 源文件.
