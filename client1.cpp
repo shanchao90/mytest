@@ -1,43 +1,65 @@
+#include <sys/types.h>
+#include <sys/socket.h>                         // 包含套接字函数库
 #include <stdio.h>
-#include <WinSock2.h>
-#include <windows.h>
-#pragma comment(lib, "ws2_32.lib")  //加载 ws2_32.dll
+#include <netinet/in.h>                         // 包含AF_INET相关结构
+#include <arpa/inet.h>                      // 包含AF_INET相关操作的函数
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/shm.h>
+#include <pthread.h>
 
-#define BUF_SIZE 100
+#define MYPORT  6666
+#define BUFFER_SIZE 1024
 
-int main(){
-    //初始化DLL
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+typedef struct
+{
+    int ab;
+    int num[1000000];
+}Node;
 
-    //向服务器发起请求
-    sockaddr_in sockAddr;
-    memset(&sockAddr, 0, sizeof(sockAddr));  //每个字节都用0填充
-    sockAddr.sin_family = PF_INET;
-    sockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    sockAddr.sin_port = htons(1234);
-   
-    char bufSend[BUF_SIZE] = {0};
-    char bufRecv[BUF_SIZE] = {0};
+int main()
+{
+        ///sockfd
+    int sock_cli = socket(AF_INET,SOCK_STREAM, 0);
 
-    while(1){
-        //创建套接字
-        SOCKET sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-        connect(sock, (SOCKADDR*)&sockAddr, sizeof(SOCKADDR));
-        //获取用户输入的字符串并发送给服务器
-        printf("Input a string: ");
-        gets(bufSend);
-        send(sock, bufSend, strlen(bufSend), 0);
-        //接收服务器传回的数据
-        recv(sock, bufRecv, BUF_SIZE, 0);
-        //输出接收到的数据
-        printf("Message form server: %s\n", bufRecv);
-       
-        memset(bufSend, 0, BUF_SIZE);  //重置缓冲区
-        memset(bufRecv, 0, BUF_SIZE);  //重置缓冲区
-        closesocket(sock);  //关闭套接字
+    struct sockaddr_in servaddr;
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(MYPORT);
+    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    if (connect(sock_cli, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+    {
+        perror("connect");
+        exit(1);
     }
 
-    WSACleanup();  //终止使用 DLL
+    Node *myNode=(Node*)malloc(sizeof(Node));
+    myNode->ab=123;
+    myNode->num[0]=110;
+    myNode->num[999999]=99;
+
+    int needSend=sizeof(Node);
+    char *buffer=(char*)malloc(needSend);
+    memcpy(buffer,myNode,needSend);
+
+    int pos=0;
+    int len=0;
+    while(pos < needSend)
+    {
+        len=send(sock_cli, buffer+pos, BUFFER_SIZE,0);
+        if(len <= 0)
+        {
+            perror("ERRPR");
+            break;
+        }
+        pos+=len;
+    }
+    free(buffer);
+    free(myNode);
+    close(sock_cli);
+    printf("Send over!!!\n");
     return 0;
 }

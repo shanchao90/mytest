@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 using namespace std;
 
+
+#define BUFFER_SIZE 1024
 struct message
 {
     int func=0;//操作数
@@ -22,6 +24,13 @@ struct message
     string TeaNa;//团队名
     string TeaNu;//团队号
 };
+
+struct message1
+{
+    int func=0;//操作数
+    string BIGSTR[10];//信息
+};
+
 //添加新警员
 void inpolice(struct message *p)
 {
@@ -143,33 +152,46 @@ void shotea(struct message *p)
     cout<<(*p).func<<endl;
 }
 
+void showmessage(struct message1 *p)
+{
+    int funcID=(*p).func;
+
+    switch (funcID)
+    {
+    case 7:cout<<"团队成员:"<<endl;break;
+    case 8:cout<<"案件相关人员:"<<endl;break;
+    case 9:cout<<"警员:"<<endl;break;
+    case 10:cout<<"工作对象:"<<endl;break;
+    case 11:cout<<"案件:"<<endl;break;
+    case 12:cout<<"团队:"<<endl;break;
+    default:cout<<"非法操作字"<<endl;break;
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        cout<<(*p).BIGSTR[i]<<endl;
+        if(sizeof((*p).BIGSTR[i+1]) == 0) break;
+    }
+    
+}
 
 int main(){
-    //创建套接字
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-
+    
     //向服务器（特定的IP和端口）发起请求
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));  //每个字节都用0填充
     serv_addr.sin_family = AF_INET;  //使用IPv4地址
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  //具体的IP地址
     serv_addr.sin_port = htons(1234);  //端口
-    connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-   
-    //读取服务器传回的数据
-    char buffer[40];
-    read(sock, buffer, sizeof(buffer)-1);
-   
-    printf("Message form server: %s\n", buffer);
-   
     
-    
-
-    struct message min;
-    message *p_min;
+    message *p_min=(message*)malloc(sizeof(message)); //发送的消息
+    message1 *p_mou=(message1*)malloc(sizeof(message1)); //接受的消息
     char ch;
     while(1)
     {
+        //创建套接字
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+        
         cout<<"根据提示输入操作字"<<endl;
         cout<<"a.添加新警员"<<endl;
         cout<<"b.添加新工作对象"<<endl;
@@ -200,14 +222,59 @@ int main(){
             case 'j':showo(p_min);break;
             case 'k':shoca(p_min);break;
             case 'l':shotea(p_min);break;
-            case 'z':
+            case 'z':{
             close(sock);//关闭套接字
             delete(p_min);
             cout<<"Bye!"<<endl;
             return 0;
-            break;
+            break;}
             default:cout<<"非法操作字"<<endl;break;
         }
         
+        int needSend=sizeof(message);
+        char *buffer=(char*)malloc(needSend);
+        memcpy(buffer,p_min,needSend);
+
+        int pos=0;
+        int len=0;
+        while(pos < needSend)
+        {
+            len=send(sock, buffer+pos, BUFFER_SIZE,0);
+            if(len <= 0)
+            {
+                perror("ERRPR");
+                break;
+            }
+            pos+=len;
+        }
+
+        int needRecv=sizeof(message1);
+        char *buffer=(char*)malloc(needRecv);
+        
+        int pos2=0;
+        int len2;
+        while(pos2 < needRecv)
+        {
+            len = recv(sock, buffer+pos, BUFFER_SIZE, 0);
+            if (len2 < 0)
+            {
+                printf("Server Recieve Data Failed!\n");
+                break;
+            }
+            pos2+=len2;
+
+        }
+
+        memcpy(p_mou,buffer,needRecv);
+        showmessage(p_mou);
+
+        free(buffer);
+        free(p_min);
+        free(p_mou);
+        close(sock);
+
+
+
+        return 0;
     }
 }
