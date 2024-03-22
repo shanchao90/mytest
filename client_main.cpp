@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 using namespace std;
@@ -230,6 +230,7 @@ int main(){
             break;}
             default:cout<<"非法操作字"<<endl;break;
         }
+        //尝试
         
         int needSend=sizeof(message);
         char *buffer=(char*)malloc(needSend);
